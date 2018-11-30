@@ -55,25 +55,27 @@ class SocketService
                     $t = socket_recv($_sock, $buffer, 2048, 0);
                     if ($t != false) {
                         $msg = $this->message($buffer);
+                        echo $msg . "\n";
                         $msg = json_decode($msg, true);
                         print_r($msg);
                         if ($msg['code'] == -1) {
                             //关闭连接
+                            //获取客户端ip
+                            socket_getpeername($_sock, $client_ip);
+                            echo $client_ip . "断开连接\n";
                             socket_close($_sock);
                             //弹出socket
-                            $clients = array_slice($clients, array_search($msg['ip'], $clients));
-                            print_r($clients);
+                            unset($clients[$client_ip]);
                         } else {
                             //在这里业务代码
                             echo "{$key} 发送:", $msg['content'], "\n";
                             //广播
-                            foreach ($clients as $ip => $client) {
-                                if ($ip != '0') {
-                                    $this->send($client, '收到');
-                                }
-                            }
+//                            foreach ($clients as $ip => $client) {
+//                                if ($ip != '0') {
+//                                    $this->send($client, '收到');
+//                                }
+//                            }
                         }
-
                     } else {
                         socket_close($_sock);
                     }
@@ -171,7 +173,6 @@ class SocketService
     }
 }
 
-$_ENV['COMPUTERNAME'] = isset($_ENV['COMPUTERNAME']) ? $_ENV['COMPUTERNAME'] : "";
-$ip = gethostbyname($_ENV['COMPUTERNAME']);
-$sock = new SocketService($ip);
+
+$sock = new SocketService('192.168.2.113');
 $sock->run();
