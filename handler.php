@@ -8,13 +8,14 @@
 header("Content-type: text/html; charset=utf-8");
 $action = $_GET['action'];
 $img_data = $_POST['img'];
+$ip = $_POST['ip'];
 if ($action == 'save') {
     if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $img_data, $result)) {
         $type = $result[2];
-        $new_file = "./img/pic.{$type}";
+        $new_file = "./img/{$ip}.{$type}";
         if (file_exists($new_file)) {
             //若存在旧文件
-            copy($new_file, "./his_img/" . time() . '.' . $type);
+            //copy($new_file, "./his_img/" . time() . '.' . $type);
             unlink($new_file);//删除旧文件
         }
         if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $img_data)))) {

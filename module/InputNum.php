@@ -3,34 +3,45 @@
     <div class="modal-dialog modal-sm" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="myModalLabel">请输入参赛号码</h4>
+                <h4 class="modal-title" id="myModalLabel">配置</h4>
             </div>
             <div class="modal-body">
-                <input type="text" class="form-control input_num">
+                <div class="form-group">
+                    <label>服务器：</label>
+                    <input type="text" class="form-control server" value="192.168.2.113">
+                </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary input_num_btn disabled">确定</button>
+                <button class="btn btn-info btn_jump">确定</button>
             </div>
         </div>
     </div>
 </div>
 <script>
-$('#input_num_modal').modal({
-  keyboard: false,
-  backdrop: 'static'
-});
-$('.input_num').on('input propertychange', function () {
-  if (!isNaN($('.input_num').val()) && $('.input_num').val() != '') {
-    $('.input_num_btn').removeClass('disabled');
-    $('.input_num').parent().removeClass('has-error');
-  } else {
-    $('.input_num').parent().addClass('has-error');
-    $('.input_num_btn').addClass('disabled');
-  }
-})
-$('.input_num_btn').click(function () {
-  if (!$(this).hasClass('disabled'))
-    window.location.href = "./client.php?num=" + $('.input_num').val();
+var num = null;
+var ip = '192.168.2.113';
+var webSocket = new WebSocket("ws://" + ip + ":8083");
+webSocket.onopen = function () {
 
+};
+webSocket.onerror = function () {
+  alert('发生错误，请联系管理员！');
+};
+webSocket.onmessage = function (ev) {
+
+};
+$(function () {
+  $('#input_num_modal').modal({
+    keyboard: false,
+    backdrop: 'static',
+  });
+  $('.btn_jump').click(function () {
+    var server = $('.server').val();
+    if (server.length > 0) {
+      webSocket.send(JSON.stringify({code: -1, reason: '配置完成，开始跳转', content: 'close'}));
+      webSocket.close();
+      window.location.href = './client.php?server=' + server;
+    }
+  })
 })
 </script>

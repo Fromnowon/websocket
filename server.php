@@ -35,13 +35,14 @@ class SocketService
     {
         $this->service();
         $clients[] = $this->_sockets;
+        $result_socket = null;
         while (true) {
             $changes = $clients;
             $write = NULL;
             $except = NULL;
             socket_select($changes, $write, $except, NULL);//此方法会自动移除不活动的socket
             foreach ($changes as $key => $_sock) {
-                if ($this->_sockets == $_sock) { //判断是不是新接入的socket
+                if ($this->_sockets == $_sock) { //若为新连接，则握手并记录
                     if (($newClient = socket_accept($_sock)) === false) {
                         die('failed to accept socket: ' . socket_strerror($_sock) . "\n");
                     }
@@ -52,32 +53,62 @@ class SocketService
                     $clients[$ip] = $newClient;
                     echo '新连接：' . $ip . "\n";
                 } else {
+                    //接收消息
                     $t = socket_recv($_sock, $buffer, 2048, 0);
                     if ($t != false) {
+                        //处理消息
                         $msg = $this->message($buffer);
                         echo $msg . "\n";
                         $msg = json_decode($msg, true);
-                        print_r($msg);
-                        if ($msg['code'] == -1) {
-                            //关闭连接
-                            //获取客户端ip
-                            socket_getpeername($_sock, $client_ip);
-                            echo $client_ip . "断开连接\n";
-                            socket_close($_sock);
-                            //弹出socket
-                            unset($clients[$client_ip]);
-                        } else {
-                            //在这里业务代码
-                            echo "{$key} 发送:", $msg['content'], "\n";
-                            //广播
-//                            foreach ($clients as $ip => $client) {
-//                                if ($ip != '0') {
-//                                    $this->send($client, '收到');
-//                                }
-//                            }
+                        //获取客户端ip
+                        socket_getpeername($_sock, $client_ip);
+                        //状态码：[-1:断开连接并清空用户信息, 1:完成配置, 2:发送内容,3:返回参赛人数,4:返回客户端ip]
+                        switch ($msg['code']) {
+                            default:
+                                //其余莫名其妙的code全归为断开连接
+                            case -1:
+                                //弹出socket
+                                unset($clients[$client_ip]);
+                                socket_close($_sock);
+                                //告诉result.php用户断开
+                            if (is_resource($result_socket))
+                                    $this->send($result_socket, json_encode(array('op' => 3, 'data' => $client_ip)));
+                                break;
+                            case 1:
+                                //完成配置
+                                unset($clients[$client_ip]);
+                                socket_close($_sock);
+                                break;
+                            case 2:
+                                //发送消息
+                                echo "{$client_ip} 发送:", $msg['content'], "\n";
+                                if (is_resource($result_socket))
+                                    $this->send($result_socket, json_encode(array('op' => 1, 'data' => $client_ip)));//告诉result可以取结果了
+                                break;
+                            case 3:
+                                //首次联系result.php
+                                $result_socket = $_sock;
+                                $clients_arr = array();
+                                foreach ($clients as $ip => $client) {
+                                    if ($ip != 0 && $ip != $this->address) {
+                                        array_push($clients_arr, $ip);
+                                    }
+                                }
+                                $this->send($_sock, json_encode(array('op' => 0, 'data' => $clients_arr)));
+                                break;
+                            case 4:
+                                //返回客户端ip
+                                $this->send($_sock, $client_ip);
+                                $this->send($result_socket, json_encode(array('op' => 2, 'data' => $client_ip)));//告诉result.php有新成员加入
                         }
                     } else {
+                        //网络掉线会进入此分支
+                        //弹出socket
+                        socket_getpeername($_sock, $client_ip);
+                        unset($clients[$client_ip]);
                         socket_close($_sock);
+                        //告诉result.php用户断开
+                        $this->send($result_socket, json_encode(array('op' => 3, 'data' => $client_ip)));
                     }
                 }
             }
@@ -86,6 +117,7 @@ class SocketService
             echo '---------------------------------------------------------' . "\n";
         }
     }
+
 
     /**
      * 握手处理
