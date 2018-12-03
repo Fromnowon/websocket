@@ -71,7 +71,7 @@ class SocketService
                                 unset($clients[$client_ip]);
                                 socket_close($_sock);
                                 //告诉result.php用户断开
-                            if (is_resource($result_socket))
+                                if (is_resource($result_socket))
                                     $this->send($result_socket, json_encode(array('op' => 3, 'data' => $client_ip)));
                                 break;
                             case 1:
@@ -205,6 +205,16 @@ class SocketService
     }
 }
 
+require_once './module/getHostIp.php';
+require_once './module/sqlConn.php';
+require_once './module/sqlHandler.php';
+$ip = (new GetHostIP())->byShell();
+//数据库操作
+$conn = sql_conn("localhost", "root", "8ud7fh", 'my_contest');
+$sql_handler = new sqlHandler($conn);
+$date = date('Y-m-d H:i:s');
+$sql_handler->update('server_ip', "`ip`='{$ip}',`update_time`='{$date}'", "`id`=1");
 
-$sock = new SocketService('192.168.2.113');
+//运行服务
+$sock = new SocketService($ip);
 $sock->run();

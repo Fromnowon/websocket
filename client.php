@@ -14,6 +14,7 @@
     <style>
         body {
             overflow: hidden;
+            background: #efefef;
         }
 
         .draw {
@@ -36,7 +37,7 @@ if (!isset($_GET['server'])) {
 ?>
 <div class="draw">
     <div class="js-signature" data-border="1px solid black"
-         data-line-width="5" data-line-color="#000000" data-background="#DCDCDC" data-auto-fit="true">
+         data-line-width="5" data-line-color="#000000" data-auto-fit="true">
     </div>
     <div class="ws_status">
         <span class="server"></span>
@@ -109,7 +110,7 @@ function wsClose(reason) {
   }
   webSocket.send(JSON.stringify({code: -1, reason: reason, content: 'close'}));
   ws_status_handler(0);
-  webSocket.close();
+  // webSocket.close();
   $('#error').modal();
 }
 

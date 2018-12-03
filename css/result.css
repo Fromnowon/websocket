@@ -1,0 +1,33 @@
+body {
+    margin: 10px;
+}
+
+.result_img_div {
+    height: 300px;
+    border: 1px solid lightgray;
+}
+
+.result_img {
+    height: 100%;
+}
+
+.result_img img {
+    height: 100%;
+}
+
+.menu_area {
+    opacity: 0;
+    width: 3px;
+    height: 100%;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+.pushbar {
+    border-left: 1px solid black;
+}
+
+.menu_item {
+    margin: 0 10px;
+}
