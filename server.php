@@ -62,7 +62,7 @@ class SocketService
                         $msg = json_decode($msg, true);
                         //获取客户端ip
                         socket_getpeername($_sock, $client_ip);
-                        //状态码：[-1:断开连接并清空用户信息, 1:完成配置, 2:发送内容,3:返回参赛人数,4:返回客户端ip]
+                        //状态码：[-1:断开连接并清空用户信息, 0:一轮比赛结束，1:完成配置, 2:发送内容,3:返回参赛人数,4:返回客户端ip，5：开启测试解除限制]
                         switch ($msg['code']) {
                             default:
                                 //其余莫名其妙的code全归为断开连接
@@ -73,6 +73,14 @@ class SocketService
                                 //告诉result.php用户断开
                                 if (is_resource($result_socket))
                                     $this->send($result_socket, json_encode(array('op' => 3, 'data' => $client_ip)));
+                                break;
+                            case 0:
+                                //一轮结束，向客户端发送消息
+                                foreach ($clients as $ip => $client) {
+                                    if ($ip != 0 && $ip != $this->address) {
+                                        $this->send($client, json_encode(array('op' => 0)));
+                                    }
+                                }
                                 break;
                             case 1:
                                 //完成配置
@@ -98,7 +106,7 @@ class SocketService
                                 break;
                             case 4:
                                 //返回客户端ip
-                                $this->send($_sock, $client_ip);
+                                $this->send($_sock, json_encode(array('op' => 1, 'ip' => $client_ip)));
                                 $this->send($result_socket, json_encode(array('op' => 2, 'data' => $client_ip)));//告诉result.php有新成员加入
                         }
                     } else {
@@ -112,7 +120,7 @@ class SocketService
                     }
                 }
             }
-            echo "当前客户连接数:" . (count($clients) - 1) . "\n";
+            echo "当前连接数:" . (count($clients) - 1) . "\n";
             print_r($clients);
             echo '---------------------------------------------------------' . "\n";
         }
@@ -209,6 +217,13 @@ require_once './module/getHostIp.php';
 require_once './module/sqlConn.php';
 require_once './module/sqlHandler.php';
 $ip = (new GetHostIP())->byShell();
+
+if ($argc > 1) {
+    if ($argc > 2) {
+        echo "参数过多，请检查！\n";
+    } else $ip = $argv[1];
+}
+
 //数据库操作
 $conn = sql_conn("localhost", "root", "8ud7fh", 'my_contest');
 $sql_handler = new sqlHandler($conn);
@@ -217,4 +232,5 @@ $sql_handler->update('server_ip', "`ip`='{$ip}',`update_time`='{$date}'", "`id`=
 
 //运行服务
 $sock = new SocketService($ip);
+echo '若要修改服务器IP则将其作为参数传入重新执行，如：[php.exe server.php 192.168.1.1]' . "\n";
 $sock->run();

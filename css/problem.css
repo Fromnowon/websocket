@@ -1,0 +1,96 @@
+body {
+    overflow: hidden;
+}
+
+.title_input {
+
+}
+
+.left {
+    border-right: 1px solid #ddd;
+}
+
+.left, .right {
+    overflow-y: auto;
+}
+
+.left a {
+    white-space: nowrap;
+}
+
+.right {
+    padding: 10px 50px 0 10px;
+}
+
+.list-group-item:first-child, .list-group-item:last-child {
+    border-radius: 0;
+}
+
+.list-group {
+    margin-bottom: 0;
+}
+
+.list-group a {
+    border-right: 0;
+    cursor: pointer;
+}
+
+.list-group a {
+    padding: 8px 10px;
+}
+
+.p_content {
+    margin-bottom: 60px;
+}
+
+.p_title {
+    width: 30%;
+    min-width: 200px
+}
+
+.p_confirm {
+    font-size: 20px;
+    color: limegreen;
+    cursor: pointer;
+}
+
+.p_add_btn {
+    z-index: 999;
+}
+
+.p_add_btn_img {
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -11px;
+    margin-top: -13px;
+}
+
+.p_top_btn {
+    color: gray;
+    position: fixed;
+    right: 30px;
+    bottom: 100px;
+    cursor: pointer;
+    z-index: 999;
+}
+
+.circle {
+    cursor: pointer;
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    width: 48px;
+    height: 48px;
+    background: dodgerblue;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    box-shadow: 1px 1px 5px 2px #d9d9d9;
+    transition: background-color 0.5s;
+}
+
+.circle:hover {
+    background: limegreen;
+}

@@ -31,7 +31,7 @@ class sqlHandler
 
     function all($table, $order)
     {
-        $sql = "select * from  `$table` " . $order;
+        $sql = "select * from `$table` $order";
         $res = mysqli_query($this->conn, $sql);
         $arr = array();
         while ($row = mysqli_fetch_assoc($res)) {
@@ -69,5 +69,10 @@ class sqlHandler
         if (!$res) {
             echo __FUNCTION__ . '执行失败！' . $sql . "\n";
         }
+    }
+
+    function close()
+    {
+        mysqli_close($this->conn);
     }
 }

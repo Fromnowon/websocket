@@ -1,9 +1,14 @@
 body {
-    margin: 10px;
+    overflow: hidden;
+}
+
+.row {
+    margin: 0;
 }
 
 .result_img_div {
-    height: 300px;
+    cursor: pointer;
+    /*height: 300px;*/
     border: 1px solid lightgray;
 }
 
@@ -12,6 +17,7 @@ body {
 }
 
 .result_img img {
+    cursor: pointer;
     height: 100%;
 }
 
@@ -24,10 +30,137 @@ body {
     top: 0;
 }
 
+.menu_content {
+    border-right: 1px solid #ddd;
+    height: 100%;
+}
+
 .pushbar {
-    border-left: 1px solid black;
+    background: rgba(245, 245, 245, 0.73);
+    border-left: 1px solid lightgray;
+}
+
+.p_list {
+    height: 100%;
+    overflow-y: auto;
+}
+
+.disabled {
+    color: lightgray !important;
+}
+
+.disabled:hover {
+    color: lightgray !important;
+}
+
+.p_list h3 {
+    margin-top: 0;
+}
+
+.p_list th, .p_list td {
+    text-align: center;
+}
+
+.p_list table td {
+    vertical-align: middle !important;
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.ready {
+    color: blue;
+}
+
+#problem_modal .modal-body * {
+    font-size: 24px;
+}
+
+.start_btn_div {
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+}
+
+.start_btn_text {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    color: white;
+    font-weight: bold
 }
 
 .menu_item {
-    margin: 0 10px;
+    margin: 0 20px;
+}
+
+.menu_bottom {
+    position: absolute;
+    bottom: 20px;
+}
+
+.margin-r {
+    font-size: 16px;
+    vertical-align: top;
+    line-height: 1.4;
+}
+
+.page-header {
+    margin: 0 -15px;
+    padding: 10px 20px;
+    background: #f9f9f9;
+}
+
+.page-header h1 {
+    margin-top: 10px;
+}
+
+.time_bar {
+    margin: 0 -15px;
+    position: relative;
+}
+
+.progress {
+    border-radius: 0;
+    opacity: 0;
+}
+
+.img_detail {
+    display: none;
+    position: absolute;
+    /*侧边栏是1000...*/
+    z-index: 1001;
+    width: 100%;
+    height: 100%;
+    background: rgba(90, 90, 90, 0.8);
+    top: 0;
+    left: 0;
+}
+
+/*---------------*/
+.bold {
+    font-weight: bold;
+}
+
+.circle {
+    cursor: pointer;
+    position: relative;
+    width: 64px;
+    height: 64px;
+    background: dodgerblue;
+    -moz-border-radius: 50px;
+    -webkit-border-radius: 50px;
+    border-radius: 50px;
+    box-shadow: 1px 1px 5px 2px #d9d9d9;
+    transition: background-color 0.5s;
+}
+
+.circle:hover {
+    background: limegreen;
 }
