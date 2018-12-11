@@ -17,7 +17,7 @@ $(function () {
   $('.pushbar .row').css({height: $('.pushbar').height() - $('.pushbar').children().outerHeight(true)});
 
   //菜单隐藏
-  $(document).click(function () {
+  $(document).click(function (e) {
     pushbar.close();
     $('.start_btn_div').show();
   });
@@ -113,10 +113,35 @@ $(function () {
       $('.p_list .p_select').addClass('disabled');
     }
   });
+  //调整图像顺序
+  $('.adjust').change(function () {
+    if ($(this).is(":checked")) {
+      //隐藏图片
+      //$('.result_img_div img').hide();
+      //显示箭头
+      $('.result_img_div').append('<div style="z-index: 997;background:rgba(255,255,255,0.9);position: absolute;top: 0;left: 0;width: 100%;height: 100%;"><img src="./assert/arrow-left.png" class="adjust_icon"></div>');
+      //绑定事件
+      $('.adjust_icon').off().click(function (e) {
+        var obj = $(this).parent().parent();
+        obj.addClass('adjusted');
+        setTimeout(function () {
+          obj.prev().before(obj);
+        }, 500);
+        setTimeout(function () {
+          obj.removeClass('adjusted');
+        }, 2000);
+        e.stopPropagation();
+      })
+    } else {
+      $('.result_img_div').find('.adjust_icon').parent().remove();
+      //还原图片
+      //$('.result_img_div img').show();
+    }
+  });
 
   //图像放大
-  $('.result').on('click', '.result_img_div', function () {
-    $('.img_detail').html($('.result_img').find('img').clone().css({height: '100%'})).fadeIn(function () {
+  $('.result').on('click', '.result_img_div img', function () {
+    $('.img_detail').html($(this).clone().css({height: '100%'})).fadeIn(function () {
     });
   });
   $('.img_detail').click(function () {
@@ -132,10 +157,14 @@ $(function () {
       alert('未设置倒计时');
       return;
     }
-    //若测试开启则关闭
+    //若某些功能开启则关闭
     if ($('.test').attr('flag') == 1) {
       $('.test').trigger('click');
     }
+    if ($('.adjust').is(":checked")) {
+      $('.adjust').trigger('click');
+    }
+
     //清除答案区域
     $('.result_img').html('');
     //检测是否关联题目，是则显示modal
@@ -234,7 +263,7 @@ $(function () {
       case 1:
         //提取图片
         if (!frozenData) {
-          $(".result_img_div[flag='" + data + "'] .result_img").html("<img class='img-responsive center-block' src='./img/" + data + ".jpeg?" + Math.random() + "'/>");
+          $(".result_img_div[flag='" + data + "'] .result_img").html("<img class='img-responsive center-block' src='./img/" + data + ".png?" + Math.random() + "'/>");
         }
         break;
       case 2:
@@ -253,8 +282,20 @@ $(function () {
       if (action) {
         if ($(".result_img_div[flag='" + ip + "']").length == 0) {
           //不存在
-          $('.result').append("<div class='col-md-4 result_img_div' style='height: " + remain + "px;' flag='" + ip + "'><div class='result_img'></div>" +
-            "<span style='position: absolute;left: 5px;bottom: 5px'>" + ip + "</span></div>");
+          //检查player_num是否连续，以此判断是否发生掉线情况
+          $.each($('.result_img_div'), function (index, element) {
+            if ($(this).find('.player_num').text() != (index + 1)) {
+              //若当前位置不等于其自身号码，则将新选手插入此位置
+              $(this).before("<div class='col-md-4 result_img_div' style='height: " + remain + "px;' flag='" + ip + "'><div class='result_img'></div>" +
+                "<span style='z-index: 998;position: absolute;left: 5px;bottom: 5px'><span style='font-size: 32px;font-weight: bold' class='player_num'>" + (index + 1) + "</span>：<span style='color: #ababab;'>" + ip + "</span></span></div>");
+
+            } else {
+              $('.result').append("<div class='col-md-4 result_img_div' style='height: " + remain + "px;' flag='" + ip + "'><div class='result_img'></div>" +
+                "<span style='z-index: 998;position: absolute;left: 5px;bottom: 5px'><span style='font-size: 32px;font-weight: bold' class='player_num'>" + ($('.result_img_div').length + 1) + "</span>：<span style='color: #ababab'>" + ip + "</span></span></div>");
+            }
+            //结束循环
+            return false;
+          });
           $('.num').text(parseInt($('.num').text()) + 1);
         }
       } else {
@@ -271,7 +312,7 @@ $(function () {
       //添加图像区域
       for (var index in clients_arr) {
         $('.result').append("<div class='col-md-4 result_img_div' style='height: " + remain + "px;' flag='" + clients_arr[index] + "'><div class='result_img'></div>" +
-          "<span style='position: absolute;left: 5px;bottom: 5px'>" + clients_arr[index] + "</span></div>");
+          "<span style='z-index: 998;position: absolute;left: 5px;bottom: 5px'><span style='font-size: 32px;font-weight: bold' class='player_num'>" + (parseInt(index) + 1) + "</span>：<span style='color: #ababab;'>" + clients_arr[index] + "</span></span></div>");
       }
     }
   };

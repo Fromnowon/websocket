@@ -19,7 +19,7 @@ webSocket.onmessage = function (ev) {
     case 0:
       //答题结束
       modal_edit('结束', '<h5>本次作答结束</h5>');
-      $('.js-signature').jqSignature('clearCanvas');//清除画布
+      $('.signature').jSignature('reset');//清除画布
       setTimeout(function () {
         $('#modal').modal('hide');
       }, 3000);
@@ -66,7 +66,7 @@ function wsClose(reason) {
 
 //清除画布
 function clearCanvas() {
-  $('.js-signature').jqSignature('clearCanvas');
+  $('.signature').jSignature('reset');
   // $('#saveBtn').attr('disabled', true);
   saveSignature();
 }
@@ -75,7 +75,7 @@ function clearCanvas() {
 function saveSignature() {
   console.log('upload img');
   flag = 0;
-  var dataUrl = $('.js-signature').jqSignature('getDataURL');
+  var dataUrl = $('.signature').jSignature('getData');
   $.ajax({
     type: "POST",
     dataType: "text",
@@ -101,26 +101,23 @@ function modal_edit(title, content) {
 }
 
 $(function () {
-  var signature = $('.js-signature');
-  //动态高度
-  signature.attr('data-height', $(window).height() - 100);
-
+  var signature = $('.signature');
   if (signature.length) {
-    $('.js-signature').jqSignature({
-      lineColor: '#222222',
-      lineWidth: 5,
-      border: '1px dashed #AAAAAA',
-      background: '#FFFFFF',
-      autoFit: true
+    signature.jSignature({
+      color: 'black',
+      lineWidth: 10,
+      height: $(window).height() - 100,
+      width: $(window).width() - 20,
+      'background-color': "#fff",
     });
   }
-  signature.on('mousemove touchmove', function (event) {
-    //console.log(event.originalEvent);
-    event.preventDefault();//阻止浏览器的默认事件
-  });
+  // signature.on('mousemove touchmove', function (event) {
+  //   //console.log(event.originalEvent);
+  //   event.preventDefault();//阻止浏览器的默认事件
+  // });
 
   //内容无变化时无需提交
-  signature.on('jq.signature.changed', function (e) {
+  signature.on('change', function (e) {
     flag = 1;
   });
   //定时提交
@@ -132,19 +129,23 @@ $(function () {
 
   //橡皮擦
   $('.btn-eraser').click(function () {
-    var canvas = $('.js-signature').jqSignature('getCanvas');
-    if (canvas.getContext) {
-      //获取对应的CanvasRenderingContext2D对象(画笔)
-      var ctx = canvas.getContext("2d");
-
-      //绘制一个以坐标点(100,10)为圆心、半径为50px的圆形
-      ctx.arc(100, 100, 50, 0, Math.PI * 2, false);
-
-      //绘制并填充圆形内部
-      ctx.fill();
-
-      //擦除矩形区域内的图形
-      ctx.clearRect(90, 90, 20, 20);
+    if ($(this).hasClass('active')) {
+      //取消橡皮擦
+      $(this).removeClass('active');
+      signature.css({cursor: "url('./assert/pen.png') 10 30, auto"});
+      //设置画笔为黑色
+      signature.jSignature('updateSetting', 'color', 'black', true);
+      //还原画笔尺寸
+      signature.jSignature('updateSetting', 'lineWidth', '10', true);
+    }
+    else {
+      //激活橡皮擦
+      $(this).addClass('active');
+      signature.css({cursor: "url('./assert/eraser.png') 10 30, auto"});
+      //设置画笔为白色
+      signature.jSignature('updateSetting', 'color', 'white', true);
+      //加大画笔尺寸
+      signature.jSignature('updateSetting', 'lineWidth', '30', true);
     }
   })
 });

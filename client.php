@@ -25,6 +25,10 @@
             min-width: 100px;
         }
 
+        .signature {
+            cursor: url('assert/pen.png') 10 30, auto;
+        }
+
     </style>
 </head>
 <body>
@@ -37,7 +41,7 @@ if (!isset($_GET['server'])) {
 } else $SERVER = $_GET['server'];
 ?>
 <div class="draw">
-    <div class="js-signature">
+    <div class="signature">
     </div>
     <div class="ws_status">
         <span class="server"></span>
@@ -46,13 +50,13 @@ if (!isset($_GET['server'])) {
     <div style="clear: both"></div>
     <div style="margin-top: 10px">
         <button id="clearBtn" class="btn btn-danger btn-lg pull-left" onclick="clearCanvas();"><i
-                    class="fa fa-eraser"></i>
+                    class="fa fa-eraser"> 清空</i>
         </button>
         <button id="clearBtn" class="btn btn-warning btn-lg pull-left btn-eraser" style="margin-left: 20px"><i
-                    class="fa fa-eraser">橡皮擦</i>
+                    class="fa fa-eraser"> 橡皮</i>
         </button>
         <button id="saveBtn" class="btn btn-success btn-lg pull-right" onclick="saveSignature();">
-            <i class="fa fa-check"></i>
+            <i class="fa fa-check"> 提交</i>
         </button>
     </div>
 
@@ -62,7 +66,7 @@ if (!isset($_GET['server'])) {
 <!--eruda.init();-->
 <!--console.log('控制台打印信息');-->
 <!--</script>-->
-<script src="./js/jq-signature.js"></script>
+<script src="./js/jSignature.js"></script>
 <script>
 var ip = '<?php echo $SERVER;?>';
 var webSocket = new WebSocket("ws://" + ip + ":8083");

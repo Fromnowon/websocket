@@ -69,6 +69,16 @@
             <div class="menu_item">
                 <div>
                     <label class="el-switch el-switch-green">
+                        <input class="adjust" type="checkbox" name="switch">
+                        <span class="el-switch-style"></span>
+                    </label>
+                    <span class="margin-r bold" style="color: blue">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;调整顺序</span>
+                </div>
+            </div>
+            <br>
+            <div class="menu_item">
+                <div>
+                    <label class="el-switch el-switch-green">
                         <input class="header_info" type="checkbox" name="switch" checked="">
                         <span class="el-switch-style"></span>
                     </label>
@@ -119,7 +129,7 @@
             </div>
         </div>
         <div class="result row">
-
+            <!--结果展示区域-->
         </div>
 
     </div>

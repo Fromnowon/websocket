@@ -7,9 +7,12 @@ body {
 }
 
 .result_img_div {
-    cursor: pointer;
     /*height: 300px;*/
     border: 1px solid lightgray;
+}
+
+.adjusted {
+    border: 3px solid blue;
 }
 
 .result_img {
@@ -141,6 +144,22 @@ body {
     background: rgba(90, 90, 90, 0.8);
     top: 0;
     left: 0;
+}
+
+.img_detail img {
+    background: white;
+}
+
+.adjust_icon {
+    cursor: pointer;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    text-align: center;
+    vertical-align: middle;
 }
 
 /*---------------*/

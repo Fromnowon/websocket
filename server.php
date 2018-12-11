@@ -223,6 +223,9 @@ if ($argc > 1) {
         echo "参数过多，请检查！\n";
     } else $ip = $argv[1];
 }
+if ($ip == '') {
+    $ip = '127.0.0.1';
+}
 
 //数据库操作
 $conn = sql_conn("localhost", "root", "8ud7fh", 'my_contest');
